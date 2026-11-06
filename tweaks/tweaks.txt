@@ -1,0 +1,3 @@
+# tweak folder, then the extra frameworks it links (UIKit and Foundation always)
+tidy
+tumble CoreMotion

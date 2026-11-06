@@ -1,0 +1,10 @@
+Package: dev.cellblock.tumble
+Name: Tumble
+Version: 1.0.0
+Architecture: iphoneos-arm64e
+Description: Home screen icons with gravity: tilt your phone and they fall, bounce and spin. Settings in TweakSettings.
+Maintainer: Cellblock
+Author: Cellblock
+Section: Tweaks
+Depends: mobilesubstrate, preferenceloader, firmware (>= 15.0)
+Icon: file:///Library/PreferenceLoader/Preferences/Tumble.png

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>entry</key>
+	<dict>
+		<key>cell</key><string>PSLinkCell</string>
+		<key>label</key><string>Tumble</string>
+		<key>icon</key><string>Tumble.png</string>
+	</dict>
+	<key>title</key><string>Tumble</string>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key><string>PSGroupCell</string>
+			<key>footerText</key><string>Home screen icons fall the way you tilt your phone. Tap them as usual; turn it off and they glide back.</string>
+		</dict>
+		<dict>
+			<key>cell</key><string>PSSwitchCell</string>
+			<key>default</key><true/>
+			<key>defaults</key><string>dev.cellblock.tumble</string>
+			<key>key</key><string>enabled</string>
+			<key>label</key><string>Enabled</string>
+			<key>PostNotification</key><string>dev.cellblock.tumble/changed</string>
+		</dict>
+		<dict>
+			<key>cell</key><string>PSGroupCell</string>
+			<key>label</key><string>Bounciness</string>
+		</dict>
+		<dict>
+			<key>cell</key><string>PSSliderCell</string>
+			<key>default</key><real>0.45</real>
+			<key>min</key><real>0</real>
+			<key>max</key><real>1</real>
+			<key>defaults</key><string>dev.cellblock.tumble</string>
+			<key>key</key><string>bounce</string>
+			<key>PostNotification</key><string>dev.cellblock.tumble/changed</string>
+		</dict>
+		<dict>
+			<key>cell</key><string>PSGroupCell</string>
+			<key>label</key><string>Gravity</string>
+		</dict>
+		<dict>
+			<key>cell</key><string>PSSliderCell</string>
+			<key>default</key><real>1</real>
+			<key>min</key><real>0.2</real>
+			<key>max</key><real>3</real>
+			<key>defaults</key><string>dev.cellblock.tumble</string>
+			<key>key</key><string>strength</string>
+			<key>PostNotification</key><string>dev.cellblock.tumble/changed</string>
+		</dict>
+		<dict>
+			<key>cell</key><string>PSGroupCell</string>
+		</dict>
+		<dict>
+			<key>cell</key><string>PSSwitchCell</string>
+			<key>default</key><true/>
+			<key>defaults</key><string>dev.cellblock.tumble</string>
+			<key>key</key><string>spin</string>
+			<key>label</key><string>Icons Spin</string>
+			<key>PostNotification</key><string>dev.cellblock.tumble/changed</string>
+		</dict>
+	</array>
+</dict>
+</plist>

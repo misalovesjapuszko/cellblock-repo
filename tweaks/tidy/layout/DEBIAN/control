@@ -1,0 +1,10 @@
+Package: dev.cellblock.tidy
+Name: Tidy
+Version: 1.0.0
+Architecture: iphoneos-arm64e
+Description: A cleaner home screen: hide icon labels, page dots and the dock background. Settings in TweakSettings.
+Maintainer: Cellblock
+Author: Cellblock
+Section: Tweaks
+Depends: mobilesubstrate, preferenceloader, firmware (>= 15.0)
+Icon: file:///Library/PreferenceLoader/Preferences/Tidy.png
