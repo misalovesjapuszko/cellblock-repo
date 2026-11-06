@@ -2,7 +2,7 @@ Package: dev.cellblock.tumble
 Name: Tumble
 Version: 1.0.0
 Architecture: iphoneos-arm64e
-Description: Home screen icons with gravity: tilt your phone and they fall, bounce and spin. Settings in TweakSettings.
+Description: Shake your phone and the home screen icons get gravity: they fall, bounce and spin. Shake again to put them back. Settings in TweakSettings.
 Maintainer: Cellblock
 Author: Cellblock
 Section: Tweaks

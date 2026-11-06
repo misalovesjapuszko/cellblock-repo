@@ -1,5 +1,6 @@
-// Tumble: home screen icons with gravity. Tilt the phone and they fall, bounce off each other
-// and the screen edges; tap them as usual. Turning it off glides them back into place.
+// Tumble: shake your phone and the home screen icons get gravity. They fall the way the phone
+// is tilted, bounce off each other and the screen edges, and can still be tapped. Shake again
+// and they glide back into place. ("Always On" skips the shaking.)
 //
 // Icons stay where SpringBoardHome lays them out: each one gets a stand-in physics body
 // (TumbleBody) and only the icon's transform follows it, so layout, tapping, folders and
@@ -12,7 +13,9 @@
 static NSString *const kDomain = @"dev.cellblock.tumble";
 static NSString *const kChanged = @"dev.cellblock.tumble/changed";
 
-static BOOL gEnabled = YES, gSpin = YES;
+static BOOL gEnabled = YES, gSpin = YES, gAlways = NO;
+/// shaken loose: the icons are falling until the next shake
+static BOOL gDropped = NO;
 static CGFloat gBounce = 0.45, gStrength = 1.0;
 
 static NSString *TumbleRootfs(void) {
@@ -33,6 +36,7 @@ static void TumbleLoadPrefs(void) {
     }
     gEnabled = prefs[@"enabled"] ? [prefs[@"enabled"] boolValue] : YES;
     gSpin = prefs[@"spin"] ? [prefs[@"spin"] boolValue] : YES;
+    gAlways = prefs[@"always"] ? [prefs[@"always"] boolValue] : NO;
     gBounce = prefs[@"bounce"] ? MAX(0, MIN(1, [prefs[@"bounce"] doubleValue])) : 0.45;
     gStrength = prefs[@"strength"] ? MAX(0.2, MIN(3, [prefs[@"strength"] doubleValue])) : 1.0;
 }
@@ -163,7 +167,7 @@ static void TumbleCollectListViews(UIView *view, NSMutableArray *found) {
 
 /// pages on screen get physics, pages that left the screen (or edit mode) get their icons back
 static void TumbleScan(void) {
-    if (!gEnabled) { TumbleStopAll(YES); return; }
+    if (!gEnabled || !(gDropped || gAlways)) { TumbleStopAll(YES); return; }
     NSMutableArray *lists = [NSMutableArray array];
     for (UIWindow *window in UIApplication.sharedApplication.windows) {
         if (!window.hidden) TumbleCollectListViews(window, lists);
@@ -194,18 +198,39 @@ static void TumbleScan(void) {
     }
 }
 
+/// a shake: a few hard jolts (> 1.8 g without gravity) within half a second; then a second of
+/// rest so one shake doesn't count twice
+static void TumbleCheckShake(CMDeviceMotion *motion) {
+    static NSTimeInterval firstJolt = 0, quietUntil = 0;
+    static int jolts = 0;
+    if (gAlways) return;
+    NSTimeInterval now = motion.timestamp;
+    CMAcceleration a = motion.userAcceleration;
+    double g = sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
+    if (now < quietUntil || g < 1.8) return;
+    if (now - firstJolt > 0.5) { firstJolt = now; jolts = 0; }
+    if (++jolts < 3) return;
+    jolts = 0;
+    quietUntil = now + 1.0;
+    gDropped = !gDropped;
+    UIImpactFeedbackGenerator *haptic = [[UIImpactFeedbackGenerator alloc] initWithStyle:gDropped ? UIImpactFeedbackStyleHeavy : UIImpactFeedbackStyleMedium];
+    [haptic impactOccurred];
+    TumbleScan();
+}
+
 static void TumbleStart(void) {
     if (gScanTimer == nil) {
         gScanTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 repeats:YES block:^(NSTimer *timer) { TumbleScan(); }];
     }
     if (gMotion == nil) gMotion = [[CMMotionManager alloc] init];
     if (gMotion.isDeviceMotionAvailable && !gMotion.isDeviceMotionActive) {
-        gMotion.deviceMotionUpdateInterval = 1.0 / 30.0;
+        gMotion.deviceMotionUpdateInterval = 1.0 / 40.0;
         [gMotion startDeviceMotionUpdatesToQueue:NSOperationQueue.mainQueue withHandler:^(CMDeviceMotion *motion, NSError *error) {
             if (motion == nil) return;
             // CoreMotion's y points up the screen, UIKit's down
             gGravity = CGVectorMake(motion.gravity.x, -motion.gravity.y);
             for (TumblePage *page in gPages.objectEnumerator.allObjects) [page updateGravity];
+            TumbleCheckShake(motion);
         }];
     }
     TumbleScan();
@@ -223,6 +248,7 @@ static void TumblePrefsChanged(CFNotificationCenterRef c, void *o, CFStringRef n
         TumbleLoadPrefs();
         // new bounce / spin: rebuild the pages
         TumbleStopAll(NO);
+        if (!gEnabled) gDropped = NO;
         if (gEnabled) TumbleStart(); else TumbleStop();
     });
 }
