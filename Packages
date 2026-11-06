@@ -1,0 +1,32 @@
+Package: dev.cellblock.tidy
+Version: 1.0.0
+Architecture: iphoneos-arm64e
+Maintainer: Cellblock
+Depends: mobilesubstrate, preferenceloader, firmware (>= 15.0)
+Filename: debs/dev.cellblock.tidy_1.0.0_iphoneos-arm64e.deb
+Size: 9400
+MD5sum: fa70beab91c86996c986f8d81e290ee3
+SHA1: 33f5afcf6c8ff5580f8a2d4b93b328a02586aafe
+SHA256: dbcefe324f97f5420cc8470a32c56b2f6f6f750ba6db0467221f7a3515e8a7fc
+Section: Tweaks
+Description: A cleaner home screen: hide icon labels, page dots and the dock background. Settings in TweakSettings.
+Author: Cellblock
+Icon: file:///Library/PreferenceLoader/Preferences/Tidy.png
+Name: Tidy
+
+Package: dev.cellblock.tumble
+Version: 1.0.0
+Architecture: iphoneos-arm64e
+Maintainer: Cellblock
+Depends: mobilesubstrate, preferenceloader, firmware (>= 15.0)
+Filename: debs/dev.cellblock.tumble_1.0.0_iphoneos-arm64e.deb
+Size: 20432
+MD5sum: d5b1506f0b7280619419e550faf2084d
+SHA1: 1810067d163d7e47979b68709146c6ac0ed361db
+SHA256: 0fdcfa83b877cfe046e09c6212f2612578a899b1f7a71e2daf9abe5f9ca08ea4
+Section: Tweaks
+Description: Shake your phone and the home screen icons get gravity: they fall, bounce and spin. Shake again to put them back. Settings in TweakSettings.
+Author: Cellblock
+Icon: file:///Library/PreferenceLoader/Preferences/Tumble.png
+Name: Tumble
+
