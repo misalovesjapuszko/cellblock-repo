@@ -75,10 +75,19 @@ static void TidyRefreshView(UIView *view) {
     for (UIView *sub in view.subviews) TidyRefreshView(sub);
 }
 
+/// every window of the app (UIApplication.windows is deprecated: go through the scenes)
+static NSArray<UIWindow *> *AllWindows(void) {
+    NSMutableArray *windows = [NSMutableArray array];
+    for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
+        if ([scene isKindOfClass:UIWindowScene.class]) [windows addObjectsFromArray:((UIWindowScene *)scene).windows];
+    }
+    return windows;
+}
+
 static void TidyPrefsChanged(CFNotificationCenterRef c, void *o, CFStringRef n, const void *obj, CFDictionaryRef info) {
     TidyLoadPrefs();
     dispatch_async(dispatch_get_main_queue(), ^{
-        for (UIWindow *window in UIApplication.sharedApplication.windows) TidyRefreshView(window);
+        for (UIWindow *window in AllWindows()) TidyRefreshView(window);
     });
 }
 

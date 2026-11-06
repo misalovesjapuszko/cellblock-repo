@@ -165,11 +165,20 @@ static void TumbleCollectListViews(UIView *view, NSMutableArray *found) {
     for (UIView *sub in view.subviews) TumbleCollectListViews(sub, found);
 }
 
+/// every window of the app (UIApplication.windows is deprecated: go through the scenes)
+static NSArray<UIWindow *> *AllWindows(void) {
+    NSMutableArray *windows = [NSMutableArray array];
+    for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
+        if ([scene isKindOfClass:UIWindowScene.class]) [windows addObjectsFromArray:((UIWindowScene *)scene).windows];
+    }
+    return windows;
+}
+
 /// pages on screen get physics, pages that left the screen (or edit mode) get their icons back
 static void TumbleScan(void) {
     if (!gEnabled || !(gDropped || gAlways)) { TumbleStopAll(YES); return; }
     NSMutableArray *lists = [NSMutableArray array];
-    for (UIWindow *window in UIApplication.sharedApplication.windows) {
+    for (UIWindow *window in AllWindows()) {
         if (!window.hidden) TumbleCollectListViews(window, lists);
     }
     NSMutableSet *visible = [NSMutableSet set];
