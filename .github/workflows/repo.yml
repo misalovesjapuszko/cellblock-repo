@@ -1,7 +1,7 @@
-name: Rebuild APT index and publish
+name: Rebuild APT index
 
-# Adding or removing a .deb in debs/ rebuilds Packages and Release and publishes the repo
-# on GitHub Pages (https://misalovesjapuszko.github.io/cellblock-repo/).
+# Adding or removing a .deb in debs/ rebuilds Packages and Release. The repo is served
+# straight from raw.githubusercontent.com (GitHub Pages deploys failed for this account).
 on:
   push:
     branches: [main]
@@ -9,19 +9,14 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: index
+  cancel-in-progress: false
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - name: Tools
@@ -34,12 +29,3 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A Packages Packages.* Release
           git diff --cached --quiet || { git commit -m "Rebuild APT index [skip ci]" && git push; }
-      - name: Site
-        run: |
-          mkdir _site
-          cp -R debs Packages Packages.* Release index.html CydiaIcon.png icon.png .nojekyll _site/
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-      - id: deploy
-        uses: actions/deploy-pages@v4
