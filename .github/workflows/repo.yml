@@ -1,0 +1,28 @@
+name: Rebuild APT index
+
+# Adding or removing a .deb in debs/ rebuilds Packages and Release, then Pages serves it.
+on:
+  push:
+    branches: [main]
+    paths-ignore: [Packages, "Packages.*", Release]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tools
+        run: sudo apt-get install -y dpkg-dev apt-utils zstd >/dev/null
+      - name: Build the index
+        run: ./build-repo.sh
+      - name: Commit it
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A Packages Packages.* Release
+          git diff --cached --quiet || git commit -m "Rebuild APT index"
+          git push
